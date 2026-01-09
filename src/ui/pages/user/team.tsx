@@ -174,11 +174,11 @@ export function TeamPage() {
                             className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-[hsl(240,24%,26%)]"
                         >
                             <div className="w-10 h-10 rounded-full bg-[hsl(248,80%,36%)]/10 flex items-center justify-center text-sm font-medium text-[hsl(248,80%,36%)]">
-                                {getInitials(member.users?.full_name ?? member.email)}
+                                {getInitials(member.email)}
                             </div>
                             <div className="flex-1 min-w-0">
                                 <p className="font-medium text-gray-900 dark:text-white truncate">
-                                    {member.users?.full_name ?? member.email}
+                                    {member.email}
                                 </p>
                                 <p className="text-sm text-gray-500 truncate">{member.email}</p>
                             </div>

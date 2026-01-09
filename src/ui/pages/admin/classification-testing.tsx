@@ -6,7 +6,6 @@
 import { useState } from 'react';
 import { Card, Button, Input, Select } from '@/ui/components';
 import { useClassification } from '@/domains/classification';
-import { CATEGORIES } from '@/shared/constants';
 import { formatCurrency } from '@/shared/utils';
 
 interface TestResult {
@@ -49,8 +48,6 @@ export function AdminClassificationTesting() {
                 description,
                 amount,
                 type,
-                date: new Date().toISOString(),
-                user_id: 'test',
             });
 
             const processingTime = Date.now() - startTime;
@@ -59,11 +56,11 @@ export function AdminClassificationTesting() {
                 description,
                 amount,
                 type,
-                tier1Result: result.tier === 'pattern' ? { category: result.category, confidence: result.confidence } : undefined,
-                tier2Result: result.tier === 'history' ? { category: result.category, confidence: result.confidence } : undefined,
-                tier3Result: result.tier === 'ai' ? { category: result.category, confidence: result.confidence } : undefined,
-                finalCategory: result.category,
-                finalConfidence: result.confidence,
+                tier1Result: result?.source === 'pattern' ? { category: result.category, confidence: result.confidence } : undefined,
+                tier2Result: result?.source === 'history' ? { category: result.category, confidence: result.confidence } : undefined,
+                tier3Result: result?.source === 'ai' ? { category: result.category, confidence: result.confidence } : undefined,
+                finalCategory: result?.category,
+                finalConfidence: result?.confidence,
                 processingTime,
             };
 

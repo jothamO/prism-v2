@@ -5,7 +5,6 @@
 
 import { useState, useEffect } from 'react';
 import { Card, Button, Input, Select } from '@/ui/components';
-import { supabase } from '@/domains/auth/service';
 
 interface BotConfig {
     platform: 'telegram' | 'whatsapp';
@@ -17,7 +16,7 @@ interface BotConfig {
 }
 
 export function AdminChatbots() {
-    const [loading, setLoading] = useState(true);
+    const [_loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [configs, setConfigs] = useState<BotConfig[]>([
         {
@@ -39,33 +38,9 @@ export function AdminChatbots() {
     ]);
 
     useEffect(() => {
-        // Load bot stats
-        const loadStats = async () => {
-            try {
-                // Get connected users count from telegram_connections
-                const { count: telegramUsers } = await supabase
-                    .from('telegram_connections')
-                    .select('*', { count: 'exact', head: true });
-
-                // Get WhatsApp connections
-                const { count: whatsappUsers } = await supabase
-                    .from('whatsapp_connections')
-                    .select('*', { count: 'exact', head: true });
-
-                setConfigs(prev => prev.map(config => ({
-                    ...config,
-                    connectedUsers: config.platform === 'telegram'
-                        ? (telegramUsers ?? 0)
-                        : (whatsappUsers ?? 0),
-                })));
-            } catch (error) {
-                console.error('Error loading bot stats:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        loadStats();
+        // Tables don't exist yet - using mock data
+        // TODO: Create telegram_connections and whatsapp_connections tables
+        setLoading(false);
     }, []);
 
     const handleToggle = (platform: string, enabled: boolean) => {

@@ -6,8 +6,6 @@
 import { useState, useEffect } from 'react';
 import { Card, Button } from '@/ui/components';
 import { formatCurrency } from '@/shared/utils';
-import { supabase } from '@/domains/auth/service';
-import { useAuth } from '@/domains/auth';
 
 interface Insight {
     id: string;
@@ -29,7 +27,6 @@ interface TrendData {
 }
 
 export function InsightsPage() {
-    const { user } = useAuth();
     const [loading, setLoading] = useState(true);
     const [insights, setInsights] = useState<Insight[]>([]);
     const [trends, setTrends] = useState<TrendData[]>([]);

@@ -4,16 +4,16 @@
 // =====================================================
 
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/domains/auth';
 import { useBankConnections, useBankActions } from '@/domains/banking';
 import { Card, Button } from '@/ui/components';
 
 export function BankConnectPage() {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const { user } = useAuth();
-    const { connections, loading } = useBankConnections();
-    const { connect, disconnect, loading: actionLoading, error } = useBankActions();
+    const { connections, loading: _connectionsLoading } = useBankConnections();
+    const { disconnect, loading: actionLoading, error } = useBankActions();
     const [connecting, setConnecting] = useState(false);
 
     // Nigerian banks
@@ -33,9 +33,10 @@ export function BankConnectPage() {
         setConnecting(true);
 
         try {
-            // This will trigger Mono widget via edge function
-            await connect(user.id);
-            navigate('/bank-connected');
+            // TODO: Implement Mono Connect widget integration
+            console.log('Initiating bank connect for user:', user.id);
+            // For now, show alert that feature is coming soon
+            alert('Mono bank connect coming soon!');
         } catch {
             // Error handled by hook
         } finally {

@@ -13,7 +13,7 @@ interface TelegramConnectModalProps {
     onConnected?: () => void;
 }
 
-export function TelegramConnectModal({ open, onOpenChange, onConnected }: TelegramConnectModalProps) {
+export function TelegramConnectModal({ open, onOpenChange, onConnected: _onConnected }: TelegramConnectModalProps) {
     const [loading, setLoading] = useState(false);
     const [fetchingExisting, setFetchingExisting] = useState(false);
     const [token, setToken] = useState<string | null>(null);

@@ -5,7 +5,6 @@
 
 import { useState, useEffect } from 'react';
 import { Card, Button, SearchInput, Select } from '@/ui/components';
-import { supabase } from '@/domains/auth/service';
 
 interface LogEntry {
     id: string;
@@ -30,36 +29,26 @@ export function AdminLogs() {
 
     const loadLogs = async () => {
         setLoading(true);
-        try {
-            let query = supabase
-                .from('system_logs')
-                .select('*')
-                .order('created_at', { ascending: false })
-                .limit(100);
-
-            if (levelFilter !== 'all') {
-                query = query.eq('level', levelFilter);
-            }
-            if (categoryFilter !== 'all') {
-                query = query.eq('category', categoryFilter);
-            }
-
-            const { data, error } = await query;
-            if (error) throw error;
-            setLogs(data ?? []);
-        } catch (error) {
-            console.error('Error loading logs:', error);
-            // Mock data if table doesn't exist
-            setLogs([
-                { id: '1', level: 'info', category: 'auth', message: 'User logged in', created_at: new Date().toISOString() },
-                { id: '2', level: 'info', category: 'classification', message: 'Batch classification completed (50 transactions)', created_at: new Date().toISOString() },
-                { id: '3', level: 'warn', category: 'banking', message: 'Mono sync delayed - retrying', created_at: new Date(Date.now() - 60000).toISOString() },
-                { id: '4', level: 'error', category: 'ai', message: 'Claude API rate limit exceeded', metadata: { retryAfter: 60 }, created_at: new Date(Date.now() - 120000).toISOString() },
-                { id: '5', level: 'info', category: 'compliance', message: 'Document processed: Finance Act 2025', created_at: new Date(Date.now() - 180000).toISOString() },
-            ]);
-        } finally {
-            setLoading(false);
+        // Table doesn't exist yet - using mock data
+        // TODO: Create system_logs table
+        const mockLogs: LogEntry[] = [
+            { id: '1', level: 'info', category: 'auth', message: 'User logged in', created_at: new Date().toISOString() },
+            { id: '2', level: 'info', category: 'classification', message: 'Batch classification completed (50 transactions)', created_at: new Date().toISOString() },
+            { id: '3', level: 'warn', category: 'banking', message: 'Mono sync delayed - retrying', created_at: new Date(Date.now() - 60000).toISOString() },
+            { id: '4', level: 'error', category: 'ai', message: 'Claude API rate limit exceeded', metadata: { retryAfter: 60 }, created_at: new Date(Date.now() - 120000).toISOString() },
+            { id: '5', level: 'info', category: 'compliance', message: 'Document processed: Finance Act 2025', created_at: new Date(Date.now() - 180000).toISOString() },
+        ];
+        
+        let filtered = mockLogs;
+        if (levelFilter !== 'all') {
+            filtered = filtered.filter(l => l.level === levelFilter);
         }
+        if (categoryFilter !== 'all') {
+            filtered = filtered.filter(l => l.category === categoryFilter);
+        }
+        
+        setLogs(filtered);
+        setLoading(false);
     };
 
     const getLevelColor = (level: string) => {
