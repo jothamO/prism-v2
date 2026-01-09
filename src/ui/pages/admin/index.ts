@@ -17,3 +17,5 @@ export { AdminFilings } from './filings';
 export { AdminVATTesting } from './vat-testing';
 export { AdminSimulator } from './simulator';
 export { AdminEducation } from './education';
+export { AdminNLUTesting } from './nlu-testing';
+export { AdminBanking } from './banking';

@@ -51,6 +51,8 @@ import {
   AdminVATTesting,
   AdminSimulator,
   AdminEducation,
+  AdminNLUTesting,
+  AdminBanking,
 } from "@/ui/pages/admin";
 
 // Static pages
@@ -123,6 +125,8 @@ const App = () => (
               <Route path="/admin/vat-testing" element={<AdminVATTesting />} />
               <Route path="/admin/simulator" element={<AdminSimulator />} />
               <Route path="/admin/education" element={<AdminEducation />} />
+              <Route path="/admin/nlu-testing" element={<AdminNLUTesting />} />
+              <Route path="/admin/banking" element={<AdminBanking />} />
             </Route>
 
             {/* Catch-all */}
