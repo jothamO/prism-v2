@@ -4,7 +4,7 @@
 // =====================================================
 
 import { supabase } from '@/domains/auth/service';
-import type { Transaction, Category, TransactionType } from '@/shared/types';
+import type { Category, TransactionType } from '@/shared/types';
 
 export interface TransactionFilters {
     userId?: string;

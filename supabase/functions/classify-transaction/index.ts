@@ -60,6 +60,12 @@ Respond with JSON only: {"category": "...", "confidence": 0.0-1.0, "reasoning": 
             }),
         });
 
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Anthropic API error:', response.status, errorText);
+            throw new Error(`API error: ${response.status}`);
+        }
+
         const result = await response.json();
         const content = result.content?.[0]?.text ?? '{}';
 
@@ -70,6 +76,7 @@ Respond with JSON only: {"category": "...", "confidence": 0.0-1.0, "reasoning": 
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
     } catch (error) {
+        console.error('Classification error:', error);
         return new Response(
             JSON.stringify({
                 category: 'uncategorized',

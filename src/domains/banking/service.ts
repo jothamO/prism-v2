@@ -16,6 +16,9 @@ interface MonoAccountData {
     currency: string;
 }
 
+// Export type for external use
+export type { MonoAccountData };
+
 /**
  * Connect a bank account via Mono
  */

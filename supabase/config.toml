@@ -1,1 +1,7 @@
 project_id = "umnqwpqhyuupcslihboz"
+
+[functions.classify-transaction]
+verify_jwt = false
+
+[functions.classify-batch]
+verify_jwt = false

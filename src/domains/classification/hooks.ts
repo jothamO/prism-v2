@@ -158,14 +158,16 @@ export function useClassificationWithConfirmation() {
  */
 export function useClassificationStats() {
     const { user } = useAuth();
-    const [stats, setStats] = useState({
+    
+    // Static stats until implementation - setters will be used when we fetch from DB
+    const stats = {
         patternMatched: 0,
         historyMatched: 0,
         aiClassified: 0,
         manuallyReviewed: 0,
         accuracy: 0,
-    });
-    const [loading, setLoading] = useState(true);
+    };
+    const loading = !user; // Loading if no user yet
 
     // TODO: Implement actual stats fetching from database
 
