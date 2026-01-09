@@ -5,7 +5,6 @@
 
 import { useState, useEffect } from 'react';
 import { Card, Button, Input, SearchInput, Select } from '@/ui/components';
-import { supabase } from '@/domains/auth/service';
 
 interface Article {
     id: string;
@@ -45,48 +44,23 @@ export function AdminEducation() {
 
     const loadArticles = async () => {
         setLoading(true);
-        try {
-            const { data, error } = await supabase
-                .from('education_articles')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            if (error) throw error;
-            setArticles(data ?? []);
-        } catch (error) {
-            console.error('Error loading articles:', error);
-            // Mock data
-            setArticles([
-                { id: '1', title: 'Understanding VAT in Nigeria', slug: 'what-is-vat', description: 'Learn about VAT', category: 'vat', read_time: '5 min', content: '...', is_published: true, created_at: new Date().toISOString() },
-                { id: '2', title: 'EMTL Explained', slug: 'what-is-emtl', description: 'Electronic Money Transfer Levy', category: 'basics', read_time: '3 min', content: '...', is_published: true, created_at: new Date().toISOString() },
-            ]);
-        } finally {
-            setLoading(false);
-        }
+        // Table doesn't exist yet - using mock data
+        // TODO: Create education_articles table
+        setArticles([
+            { id: '1', title: 'Understanding VAT in Nigeria', slug: 'what-is-vat', description: 'Learn about VAT', category: 'vat', read_time: '5 min', content: '...', is_published: true, created_at: new Date().toISOString() },
+            { id: '2', title: 'EMTL Explained', slug: 'what-is-emtl', description: 'Electronic Money Transfer Levy', category: 'basics', read_time: '3 min', content: '...', is_published: true, created_at: new Date().toISOString() },
+        ]);
+        setLoading(false);
     };
 
     const handleSubmit = async () => {
         setSaving(true);
-        try {
-            if (editingId) {
-                await supabase
-                    .from('education_articles')
-                    .update(form)
-                    .eq('id', editingId);
-            } else {
-                await supabase
-                    .from('education_articles')
-                    .insert(form);
-            }
-            setShowForm(false);
-            setEditingId(null);
-            setForm({ title: '', slug: '', description: '', category: 'basics', read_time: '5 min', content: '', is_published: true });
-            loadArticles();
-        } catch (error) {
-            console.error('Error saving article:', error);
-        } finally {
-            setSaving(false);
-        }
+        // TODO: Implement when education_articles table exists
+        console.log('Saving article:', form);
+        setShowForm(false);
+        setEditingId(null);
+        setForm({ title: '', slug: '', description: '', category: 'basics', read_time: '5 min', content: '', is_published: true });
+        setSaving(false);
     };
 
     const handleEdit = (article: Article) => {
@@ -105,12 +79,12 @@ export function AdminEducation() {
 
     const handleDelete = async (id: string) => {
         if (!confirm('Delete this article?')) return;
-        await supabase.from('education_articles').delete().eq('id', id);
-        loadArticles();
+        // TODO: Implement when education_articles table exists
+        console.log('Deleting article:', id);
     };
 
     const handleTogglePublish = async (id: string, published: boolean) => {
-        await supabase.from('education_articles').update({ is_published: published }).eq('id', id);
+        // TODO: Implement when education_articles table exists
         setArticles(prev => prev.map(a => a.id === id ? { ...a, is_published: published } : a));
     };
 

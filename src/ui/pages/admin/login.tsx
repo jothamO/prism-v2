@@ -11,7 +11,7 @@ import { Button, Input, Card } from '@/ui/components';
 export function AdminLogin() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { signIn, loading, error, clearError, isAdmin } = useAuth();
+    const { signIn, loading, error, clearError } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent) => {

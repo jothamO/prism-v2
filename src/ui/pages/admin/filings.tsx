@@ -12,12 +12,13 @@ interface TaxFiling {
     id: string;
     user_id: string;
     user_email?: string;
-    filing_type: 'vat' | 'paye' | 'cit' | 'pit' | 'wht';
-    period: string;
-    amount: number;
-    status: 'draft' | 'pending' | 'submitted' | 'approved' | 'rejected';
+    filing_type: string;
+    period_start: string;
+    period_end: string;
+    amount: number | null;
+    status: string | null;
     submitted_at?: string;
-    created_at: string;
+    created_at: string | null;
 }
 
 export function AdminFilings() {
@@ -57,9 +58,9 @@ export function AdminFilings() {
             console.error('Error loading filings:', error);
             // Mock data
             setFilings([
-                { id: '1', user_id: 'u1', user_email: 'john@example.com', filing_type: 'vat', period: '2026-01', amount: 125000, status: 'pending', created_at: new Date().toISOString() },
-                { id: '2', user_id: 'u2', user_email: 'jane@example.com', filing_type: 'paye', period: '2026-01', amount: 450000, status: 'submitted', submitted_at: new Date().toISOString(), created_at: new Date().toISOString() },
-                { id: '3', user_id: 'u3', user_email: 'bob@example.com', filing_type: 'pit', period: '2025', amount: 1250000, status: 'approved', created_at: new Date().toISOString() },
+                { id: '1', user_id: 'u1', user_email: 'john@example.com', filing_type: 'vat', period_start: '2026-01-01', period_end: '2026-01-31', amount: 125000, status: 'pending', created_at: new Date().toISOString() },
+                { id: '2', user_id: 'u2', user_email: 'jane@example.com', filing_type: 'paye', period_start: '2026-01-01', period_end: '2026-01-31', amount: 450000, status: 'submitted', submitted_at: new Date().toISOString(), created_at: new Date().toISOString() },
+                { id: '3', user_id: 'u3', user_email: 'bob@example.com', filing_type: 'pit', period_start: '2025-01-01', period_end: '2025-12-31', amount: 1250000, status: 'approved', created_at: new Date().toISOString() },
             ]);
         } finally {
             setLoading(false);
@@ -114,7 +115,8 @@ export function AdminFilings() {
     const filteredFilings = filings.filter(f =>
         search === '' ||
         f.user_email?.toLowerCase().includes(search.toLowerCase()) ||
-        f.period.includes(search)
+        f.period_start.includes(search) ||
+        f.period_end.includes(search)
     );
 
     return (
@@ -213,14 +215,14 @@ export function AdminFilings() {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
-                                            {filing.period}
+                                            {filing.period_start} - {filing.period_end}
                                         </td>
                                         <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
-                                            {formatCurrency(filing.amount)}
+                                            {formatCurrency(filing.amount ?? 0)}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(filing.status)}`}>
-                                                {filing.status}
+                                            <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(filing.status ?? 'draft')}`}>
+                                                {filing.status ?? 'draft'}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4">

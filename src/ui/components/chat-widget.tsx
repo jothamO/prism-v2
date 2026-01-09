@@ -5,7 +5,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/domains/auth/service';
-import { Button, Input } from '@/ui/components';
+import { Button } from '@/ui/components';
 
 interface Message {
     role: 'user' | 'assistant';

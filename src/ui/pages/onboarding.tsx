@@ -119,21 +119,13 @@ export function OnboardingPage() {
 
     const saveProgress = async () => {
         if (!user) return;
-        try {
-            await supabase.from('onboarding_progress').upsert({
-                user_id: user.id,
-                current_step: state.step,
-                account_type: state.accountType,
-                profile_data: state.profile,
-                kyc_completed: state.kycCompleted,
-                bank_connected: state.bankConnected,
-                communication_channel: state.communicationChannel,
-                preferences: state.preferences,
-                updated_at: new Date().toISOString(),
-            });
-        } catch (error) {
-            console.error('Error saving progress:', error);
-        }
+        // TODO: Create onboarding_progress table in database
+        console.log('Saving onboarding progress:', {
+            user_id: user.id,
+            current_step: state.step,
+            account_type: state.accountType,
+            profile_data: state.profile,
+        });
     };
 
     const completeOnboarding = async () => {
@@ -144,18 +136,8 @@ export function OnboardingPage() {
             await supabase.from('users').update({
                 full_name: state.profile.fullName,
                 phone: state.profile.phone,
-                state: state.profile.state,
-                account_type: state.accountType,
-                onboarding_completed: true,
-                onboarding_step: 7,
-            }).eq('id', user.id);
-
-            // Mark onboarding complete
-            await supabase.from('onboarding_progress').upsert({
-                user_id: user.id,
-                completed: true,
-                completed_at: new Date().toISOString(),
-            });
+                onboarding_complete: true,
+            }).eq('auth_user_id', user.id);
 
             goToStep('complete');
         } catch (error) {

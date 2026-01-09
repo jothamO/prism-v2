@@ -4,15 +4,25 @@
 // =====================================================
 
 import { useState } from 'react';
-import { useTransactionsForReview, useCategorization } from '@/domains/transactions';
+import { useReviewQueue, useCategorization } from '@/domains/transactions';
 import { Card, Button, SearchInput, Select } from '@/ui/components';
 import { formatCurrency } from '@/shared/utils';
 import { CATEGORIES } from '@/shared/constants';
 import type { Category } from '@/shared/types';
 
+interface ReviewTransaction {
+    id: string;
+    description: string;
+    amount: number;
+    type: 'credit' | 'debit';
+    transaction_date: string;
+    category?: string | null;
+    classification_confidence?: number | null;
+}
+
 export function AdminReviews() {
     const [search, setSearch] = useState('');
-    const { transactions, loading, refetch } = useTransactionsForReview(50);
+    const { transactions, loading, refetch } = useReviewQueue(50);
     const { categorize, loading: categorizing } = useCategorization();
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [processingId, setProcessingId] = useState<string | null>(null);
@@ -39,7 +49,7 @@ export function AdminReviews() {
         // Implementation would go here
     };
 
-    const filteredTransactions = transactions.filter(tx =>
+    const filteredTransactions = (transactions as ReviewTransaction[]).filter((tx: ReviewTransaction) =>
         search === '' ||
         tx.description.toLowerCase().includes(search.toLowerCase())
     );
@@ -110,18 +120,15 @@ export function AdminReviews() {
                                     </td>
                                 </tr>
                             ) : (
-                                filteredTransactions.map(tx => (
+                                filteredTransactions.map((tx: ReviewTransaction) => (
                                     <tr key={tx.id} className="hover:bg-gray-50 dark:hover:bg-[hsl(240,24%,26%)]">
                                         <td className="px-6 py-4 text-sm text-gray-500">
-                                            {new Date(tx.date).toLocaleDateString()}
+                                            {new Date(tx.transaction_date).toLocaleDateString()}
                                         </td>
                                         <td className="px-6 py-4">
                                             <p className="text-sm font-medium text-gray-900 dark:text-white">
                                                 {tx.description}
                                             </p>
-                                            {tx.merchant && (
-                                                <p className="text-xs text-gray-500">{tx.merchant}</p>
-                                            )}
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className={`font-medium ${tx.type === 'credit'
@@ -132,13 +139,13 @@ export function AdminReviews() {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4">
-                                            {tx.ai_suggested_category ? (
+                                            {tx.category ? (
                                                 <div className="flex items-center gap-2">
                                                     <span className="px-2 py-1 text-xs bg-[hsl(248,80%,36%)]/10 text-[hsl(248,80%,36%)] rounded-full">
-                                                        {tx.ai_suggested_category}
+                                                        {tx.category}
                                                     </span>
                                                     <span className="text-xs text-gray-400">
-                                                        {Math.round((tx.ai_confidence ?? 0) * 100)}%
+                                                        {Math.round((tx.classification_confidence ?? 0) * 100)}%
                                                     </span>
                                                 </div>
                                             ) : (
@@ -169,13 +176,13 @@ export function AdminReviews() {
                                                 >
                                                     Apply
                                                 </Button>
-                                                {tx.ai_suggested_category && (
+                                                {tx.category && (
                                                     <Button
                                                         variant="ghost"
                                                         size="sm"
                                                         onClick={() => {
                                                             setProcessingId(tx.id);
-                                                            setSelectedCategory(tx.ai_suggested_category!);
+                                                            setSelectedCategory(tx.category!);
                                                             handleCategorize(tx.id);
                                                         }}
                                                     >

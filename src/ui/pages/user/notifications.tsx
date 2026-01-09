@@ -3,7 +3,7 @@
 // =====================================================
 
 import { useState } from 'react';
-import { Card, Button, SearchInput } from '@/ui/components';
+import { Card, Button } from '@/ui/components';
 
 interface Notification {
     id: string;

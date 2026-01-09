@@ -5,18 +5,17 @@
 
 import { useState, useEffect } from 'react';
 import { Card, Button, SearchInput } from '@/ui/components';
-import { formatCurrency } from '@/shared/utils';
 import { supabase } from '@/domains/auth/service';
 
 interface BankConnection {
     id: string;
     user_id: string;
     user_email?: string;
-    bank_name: string;
-    account_number: string;
-    status: 'active' | 'pending' | 'reauth_required' | 'disconnected';
-    last_synced_at: string | null;
-    created_at: string;
+    bank_name: string | null;
+    account_number: string | null;
+    status: string | null;
+    last_sync_at: string | null;
+    created_at: string | null;
     transaction_count?: number;
 }
 
@@ -70,9 +69,9 @@ export function AdminBanking() {
             console.error('Error loading connections:', error);
             // Mock data
             setConnections([
-                { id: '1', user_id: 'u1', user_email: 'john@example.com', bank_name: 'GTBank', account_number: '****1234', status: 'active', last_synced_at: new Date().toISOString(), created_at: new Date().toISOString() },
-                { id: '2', user_id: 'u2', user_email: 'jane@example.com', bank_name: 'Access Bank', account_number: '****5678', status: 'active', last_synced_at: new Date().toISOString(), created_at: new Date().toISOString() },
-                { id: '3', user_id: 'u3', user_email: 'bob@example.com', bank_name: 'Zenith Bank', account_number: '****9012', status: 'reauth_required', last_synced_at: null, created_at: new Date().toISOString() },
+                { id: '1', user_id: 'u1', user_email: 'john@example.com', bank_name: 'GTBank', account_number: '****1234', status: 'active', last_sync_at: new Date().toISOString(), created_at: new Date().toISOString() },
+                { id: '2', user_id: 'u2', user_email: 'jane@example.com', bank_name: 'Access Bank', account_number: '****5678', status: 'active', last_sync_at: new Date().toISOString(), created_at: new Date().toISOString() },
+                { id: '3', user_id: 'u3', user_email: 'bob@example.com', bank_name: 'Zenith Bank', account_number: '****9012', status: 'reauth_required', last_sync_at: null, created_at: new Date().toISOString() },
             ]);
             setStats({ totalConnections: 3, activeConnections: 2, pendingReauth: 1, transactionsSynced: 1250 });
         } finally {
@@ -113,7 +112,7 @@ export function AdminBanking() {
     const filteredConnections = connections.filter(c =>
         search === '' ||
         c.user_email?.toLowerCase().includes(search.toLowerCase()) ||
-        c.bank_name.toLowerCase().includes(search.toLowerCase())
+        (c.bank_name ?? '').toLowerCase().includes(search.toLowerCase())
     );
 
     return (
@@ -217,21 +216,21 @@ export function AdminBanking() {
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className="flex items-center gap-2">
-                                                <span>{getBankIcon(conn.bank_name)}</span>
-                                                <span className="text-sm text-gray-900 dark:text-white">{conn.bank_name}</span>
+                                                <span>{getBankIcon(conn.bank_name ?? '')}</span>
+                                                <span className="text-sm text-gray-900 dark:text-white">{conn.bank_name ?? 'Unknown'}</span>
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-sm font-mono text-gray-600 dark:text-gray-400">
-                                            {conn.account_number}
+                                            {conn.account_number ?? 'N/A'}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(conn.status)}`}>
-                                                {conn.status.replace('_', ' ')}
+                                            <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(conn.status ?? 'disconnected')}`}>
+                                                {(conn.status ?? 'unknown').replace('_', ' ')}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
-                                            {conn.last_synced_at
-                                                ? new Date(conn.last_synced_at).toLocaleString()
+                                            {conn.last_sync_at
+                                                ? new Date(conn.last_sync_at).toLocaleString()
                                                 : 'Never'}
                                         </td>
                                         <td className="px-6 py-4">

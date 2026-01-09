@@ -5,7 +5,6 @@
 
 import { useState, useEffect } from 'react';
 import { Card, Button, Input, SearchInput, Select } from '@/ui/components';
-import { supabase } from '@/domains/auth/service';
 import { CATEGORIES } from '@/shared/constants';
 
 interface TransactionPattern {
@@ -41,75 +40,47 @@ export function AdminPatterns() {
 
     const loadPatterns = async () => {
         setLoading(true);
-        try {
-            const { data, error } = await supabase
-                .from('transaction_patterns')
-                .select('*')
-                .order('match_count', { ascending: false });
-
-            if (error) throw error;
-            setPatterns(data ?? []);
-        } catch (error) {
-            console.error('Error loading patterns:', error);
-        } finally {
-            setLoading(false);
-        }
+        // Table doesn't exist yet - using mock data
+        // TODO: Create transaction_patterns table
+        setPatterns([
+            { id: '1', pattern: 'UBER|BOLT|TAXIFY', category: 'transport', confidence: 0.95, match_count: 1250, is_active: true, created_at: new Date().toISOString() },
+            { id: '2', pattern: 'MTN|AIRTEL|GLO|9MOBILE', category: 'utilities', confidence: 0.92, match_count: 890, is_active: true, created_at: new Date().toISOString() },
+            { id: '3', pattern: 'NETFLIX|SPOTIFY|PRIME', category: 'entertainment', confidence: 0.98, match_count: 450, is_active: true, created_at: new Date().toISOString() },
+        ]);
+        setLoading(false);
     };
 
     const handleAdd = async () => {
         if (!newPattern.pattern || !newPattern.category) return;
         setSaving(true);
-        try {
-            const { error } = await supabase
-                .from('transaction_patterns')
-                .insert({
-                    pattern: newPattern.pattern,
-                    category: newPattern.category,
-                    merchant_type: newPattern.merchant_type || null,
-                    confidence: 0.9,
-                    is_active: true,
-                });
-
-            if (error) throw error;
-            setNewPattern({ pattern: '', category: '', merchant_type: '' });
-            setShowAdd(false);
-            loadPatterns();
-        } catch (error) {
-            console.error('Error adding pattern:', error);
-        } finally {
-            setSaving(false);
-        }
+        // TODO: Implement when transaction_patterns table exists
+        const newItem: TransactionPattern = {
+            id: `temp-${Date.now()}`,
+            pattern: newPattern.pattern,
+            category: newPattern.category,
+            merchant_type: newPattern.merchant_type || undefined,
+            confidence: 0.9,
+            match_count: 0,
+            is_active: true,
+            created_at: new Date().toISOString(),
+        };
+        setPatterns(prev => [...prev, newItem]);
+        setNewPattern({ pattern: '', category: '', merchant_type: '' });
+        setShowAdd(false);
+        setSaving(false);
     };
 
     const handleToggle = async (id: string, isActive: boolean) => {
-        try {
-            const { error } = await supabase
-                .from('transaction_patterns')
-                .update({ is_active: isActive })
-                .eq('id', id);
-
-            if (error) throw error;
-            setPatterns(prev => prev.map(p =>
-                p.id === id ? { ...p, is_active: isActive } : p
-            ));
-        } catch (error) {
-            console.error('Error toggling pattern:', error);
-        }
+        // TODO: Implement when transaction_patterns table exists
+        setPatterns(prev => prev.map(p =>
+            p.id === id ? { ...p, is_active: isActive } : p
+        ));
     };
 
     const handleDelete = async (id: string) => {
         if (!confirm('Delete this pattern?')) return;
-        try {
-            const { error } = await supabase
-                .from('transaction_patterns')
-                .delete()
-                .eq('id', id);
-
-            if (error) throw error;
-            setPatterns(prev => prev.filter(p => p.id !== id));
-        } catch (error) {
-            console.error('Error deleting pattern:', error);
-        }
+        // TODO: Implement when transaction_patterns table exists
+        setPatterns(prev => prev.filter(p => p.id !== id));
     };
 
     const filteredPatterns = patterns.filter(p =>
