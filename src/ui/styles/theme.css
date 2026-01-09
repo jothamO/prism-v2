@@ -1,0 +1,108 @@
+/* =====================================================
+   PRISM V2 - CSS Theme Variables
+   iBank-inspired design system with light/dark mode
+   ===================================================== */
+
+/* -------------------- COLORS -------------------- */
+:root {
+  /* Primary */
+  --primary: 248 80% 36%; /* #281C9D */
+  --primary-foreground: 0 0% 100%;
+  
+  /* Secondary */
+  --secondary: 248 36% 53%; /* #5655B9 */
+  --secondary-foreground: 0 0% 100%;
+  
+  /* Background & Surface */
+  --background: 0 0% 100%;
+  --foreground: 0 0% 20%; /* #343434 */
+  
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 20%;
+  
+  --muted: 240 5% 96%; /* #F5F5F7 */
+  --muted-foreground: 215 16% 47%;
+  
+  /* Border & Input */
+  --border: 220 13% 91%; /* #E0E0E0 */
+  --input: 240 6% 97%; /* #F2F1F9 */
+  --ring: 248 80% 36%;
+  
+  /* Semantic */
+  --success: 164 59% 58%; /* #52D5BA */
+  --success-foreground: 0 0% 100%;
+  
+  --destructive: 346 96% 63%; /* #FF4267 */
+  --destructive-foreground: 0 0% 100%;
+  
+  --warning: 38 100% 58%; /* #FFAF2A */
+  --warning-foreground: 0 0% 20%;
+  
+  --info: 207 99% 52%; /* #0890FE */
+  --info-foreground: 0 0% 100%;
+  
+  --accent: 20 96% 54%; /* #FB6B18 */
+  --accent-foreground: 0 0% 100%;
+  
+  /* Radius */
+  --radius: 0.75rem;
+}
+
+/* -------------------- DARK MODE -------------------- */
+.dark, [data-theme="dark"] {
+  --primary: 248 36% 53%; /* #5655B9 */
+  --primary-foreground: 0 0% 100%;
+  
+  --secondary: 248 45% 73%; /* #A8A3D7 */
+  --secondary-foreground: 0 0% 10%;
+  
+  --background: 240 33% 14%; /* #1A1A2E */
+  --foreground: 0 0% 100%;
+  
+  --card: 240 27% 20%; /* #252542 */
+  --card-foreground: 0 0% 100%;
+  
+  --muted: 240 24% 26%; /* #2D2D4A */
+  --muted-foreground: 248 45% 73%;
+  
+  --border: 240 24% 30%; /* #3D3D5C */
+  --input: 240 27% 20%;
+  --ring: 248 36% 53%;
+  
+  /* Semantic colors stay the same in dark mode */
+}
+
+/* -------------------- TYPOGRAPHY -------------------- */
+:root {
+  --font-sans: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+/* -------------------- SHADOWS -------------------- */
+:root {
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow: 0 4px 30px rgba(54, 41, 183, 0.07);
+  --shadow-md: 0 4px 20px rgba(40, 28, 157, 0.15);
+  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.15);
+}
+
+.dark, [data-theme="dark"] {
+  --shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* -------------------- GRADIENT -------------------- */
+.gradient-primary {
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
+}
+
+.dark .gradient-primary,
+[data-theme="dark"] .gradient-primary {
+  background: linear-gradient(135deg, #281C9D 0%, #5655B9 100%);
+}
