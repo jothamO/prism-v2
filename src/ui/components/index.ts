@@ -10,3 +10,6 @@ export * from './input';
 // Navigation
 export * from './bottom-navigation';
 export * from './admin-sidebar';
+
+// Layout
+export * from './protected-route';
