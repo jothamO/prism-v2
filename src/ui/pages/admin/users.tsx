@@ -101,7 +101,7 @@ export function AdminUsers() {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-sm text-gray-500">
-                                            {new Date(user.created_at).toLocaleDateString()}
+                                            {user.created_at ? new Date(user.created_at).toLocaleDateString() : '—'}
                                         </td>
                                         <td className="px-6 py-4">
                                             <Button variant="ghost" size="sm">

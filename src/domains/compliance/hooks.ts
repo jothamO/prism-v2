@@ -180,7 +180,7 @@ export function useRuleEvaluation(context: Record<string, unknown>) {
 
     useEffect(() => {
         if (!rulesLoading && rules.length > 0) {
-            const evalResults = evaluateRules(rules as ComplianceRule[], context);
+            const evalResults = evaluateRules(rules as unknown as ComplianceRule[], context);
             setResults(evalResults);
         }
     }, [rules, rulesLoading, JSON.stringify(context)]);

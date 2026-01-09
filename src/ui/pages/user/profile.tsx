@@ -4,15 +4,14 @@
 // =====================================================
 
 import { useAuth } from '@/domains/auth';
-import { useCurrentUserProfile, useUpdateProfile } from '@/domains/users';
+import { useCurrentUserProfile } from '@/domains/users';
 import { useTheme } from '@/ui/providers/theme-provider';
-import { Card, Button, Input } from '@/ui/components';
+import { Card, Button } from '@/ui/components';
 import { getInitials } from '@/shared/utils';
 
 export function ProfilePage() {
     const { user, signOut, isAdmin } = useAuth();
-    const { user: profile, loading } = useCurrentUserProfile();
-    const { update, loading: updating } = useUpdateProfile();
+    const { user: profile } = useCurrentUserProfile();
     const { theme, setTheme } = useTheme();
 
     const handleLogout = async () => {

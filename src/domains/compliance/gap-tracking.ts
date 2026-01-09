@@ -23,17 +23,17 @@ interface ExtractionGap {
 export async function logGap(gap: ExtractionGap) {
     const { data, error } = await supabase
         .from('compliance_extraction_gaps')
-        .insert({
+        .insert([{
             document_id: gap.documentId,
             rule_id: gap.ruleId,
             gap_category: gap.gapCategory,
             gap_description: gap.gapDescription,
-            expected_value: gap.expectedValue,
-            actual_value: gap.actualValue,
+            expected_value: gap.expectedValue as any,
+            actual_value: gap.actualValue as any,
             circular_quote: gap.circularQuote,
             priority: gap.priority ?? 'medium',
             status: 'identified',
-        })
+        }])
         .select()
         .single();
 

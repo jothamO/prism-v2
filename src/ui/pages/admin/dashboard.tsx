@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 
 export function AdminDashboard() {
     const { users, count: userCount, loading: usersLoading } = useUsersList({ limit: 5 });
-    const { stats, loading: complianceLoading } = useComplianceStats();
+    const { stats } = useComplianceStats();
     const { gaps, count: gapCount } = useGaps({ status: 'identified', limit: 5 });
 
     return (

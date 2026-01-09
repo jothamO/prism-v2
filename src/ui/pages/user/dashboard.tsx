@@ -12,7 +12,6 @@ import { TaxHealthCard, TransactionCard } from '@/ui/components';
 
 export function Dashboard() {
     const { user } = useAuth();
-    const currentYear = new Date().getFullYear();
 
     // Get transaction stats for tax health
     const { stats } = useTransactionStats();
