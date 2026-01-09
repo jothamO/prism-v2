@@ -14,3 +14,6 @@ export { AdminPatterns } from './patterns';
 export { AdminClassificationTesting } from './classification-testing';
 export { AdminLogs } from './logs';
 export { AdminFilings } from './filings';
+export { AdminVATTesting } from './vat-testing';
+export { AdminSimulator } from './simulator';
+export { AdminEducation } from './education';
