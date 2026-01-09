@@ -5,10 +5,8 @@
 
 import { supabase } from '@/domains/auth/service';
 import type {
-    LegalDocument,
     ComplianceRule,
     DocumentType,
-    RegulatoryBody,
     DocumentStatus,
     ReviewStatus
 } from '@/shared/types';
