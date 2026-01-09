@@ -68,6 +68,12 @@ Respond with JSON array only:
             }),
         });
 
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Anthropic API error:', response.status, errorText);
+            throw new Error(`API error: ${response.status}`);
+        }
+
         const result = await response.json();
         const content = result.content?.[0]?.text ?? '[]';
 
@@ -89,6 +95,7 @@ Respond with JSON array only:
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
     } catch (error) {
+        console.error('Batch classification error:', error);
         return new Response(
             JSON.stringify({ results: [], error: 'Batch classification failed' }),
             { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

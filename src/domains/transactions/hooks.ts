@@ -188,7 +188,7 @@ export function useCategorization() {
  * Hook for tax-related transaction filtering
  */
 export function useTaxableTransactions(year: number) {
-    const { user } = useAuth();
+    // Auth hook unused here as useTransactions handles user filtering internally
     const startDate = useMemo(() => new Date(year, 0, 1), [year]);
     const endDate = useMemo(() => new Date(year, 11, 31), [year]);
 

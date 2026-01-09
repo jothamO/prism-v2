@@ -4,7 +4,6 @@
 // =====================================================
 
 import { supabase } from '@/domains/auth/service';
-import type { AuthenticatedUser } from '@/shared/types';
 
 interface UpdateUserData {
     fullName?: string;
