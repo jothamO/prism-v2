@@ -11,3 +11,4 @@ export { ReportsPage } from './reports';
 export { TeamPage } from './team';
 export { TaxCalendarPage } from './tax-calendar';
 export { BankConnectPage } from './bank-connect';
+export { EducationCenterPage } from './education';
