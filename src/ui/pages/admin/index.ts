@@ -10,3 +10,7 @@ export { AdminSettings } from './settings';
 export { AdminAnalytics } from './analytics';
 export { AdminChatbots } from './chatbots';
 export { AdminReviews } from './reviews';
+export { AdminPatterns } from './patterns';
+export { AdminClassificationTesting } from './classification-testing';
+export { AdminLogs } from './logs';
+export { AdminFilings } from './filings';
