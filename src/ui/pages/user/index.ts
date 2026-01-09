@@ -14,3 +14,4 @@ export { BankConnectPage } from './bank-connect';
 export { EducationCenterPage } from './education';
 export { SettingsPage } from './settings';
 export { NotificationsPage } from './notifications';
+export { InsightsPage } from './insights';

@@ -5,6 +5,7 @@
 // Auth
 export { AuthPage } from './auth';
 export { LandingPage } from './landing';
+export { OnboardingPage } from './onboarding';
 
 // Static pages
 export { FAQPage } from './faq';
