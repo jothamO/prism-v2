@@ -141,10 +141,12 @@ export interface LegalDocument {
 export interface ComplianceRule {
     id: string;
     ruleName: string;
-    ruleType: 'tax_rate' | 'threshold' | 'exemption' | 'filing_deadline' | 'penalty';
+    ruleType: 'tax_rate' | 'threshold' | 'exemption' | 'filing_deadline' | 'penalty' | 'emtl' | 'tax_band';
     conditions: Record<string, unknown>;
     outcome: Record<string, unknown>;
     isActive: boolean;
+    effectiveFrom?: string | null;
+    effectiveUntil?: string | null;
     createdAt: Date;
 }
 

@@ -14,7 +14,7 @@ import {
     rejectDocument,
 } from './service';
 import { getGaps, logGap } from './gap-tracking';
-import { evaluateRules, evaluateRule } from './rule-engine';
+import { evaluateRules } from './rule-engine';
 import type { ComplianceRule } from '@/shared/types';
 
 /**
