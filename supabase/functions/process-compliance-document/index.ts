@@ -75,8 +75,8 @@ Respond with JSON:
                 'anthropic-version': '2023-06-01',
             },
             body: JSON.stringify({
-                model: 'claude-3-sonnet-20240229',
-                max_tokens: 4000,
+                model: 'claude-sonnet-4-5-20250929',
+                max_tokens: 8000,
                 messages: [{ role: 'user', content: prompt }],
             }),
         });

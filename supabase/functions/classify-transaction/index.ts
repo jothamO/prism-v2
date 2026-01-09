@@ -54,8 +54,8 @@ Respond with JSON only: {"category": "...", "confidence": 0.0-1.0, "reasoning": 
                 'anthropic-version': '2023-06-01',
             },
             body: JSON.stringify({
-                model: 'claude-3-haiku-20240307',
-                max_tokens: 200,
+                model: 'claude-sonnet-4-5-20250929',
+                max_tokens: 8000,
                 messages: [{ role: 'user', content: prompt }],
             }),
         });
