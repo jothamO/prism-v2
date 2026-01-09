@@ -12,3 +12,5 @@ export { TeamPage } from './team';
 export { TaxCalendarPage } from './tax-calendar';
 export { BankConnectPage } from './bank-connect';
 export { EducationCenterPage } from './education';
+export { SettingsPage } from './settings';
+export { NotificationsPage } from './notifications';

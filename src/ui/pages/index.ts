@@ -10,6 +10,7 @@ export { LandingPage } from './landing';
 export { FAQPage } from './faq';
 export { PrivacyPage } from './privacy';
 export { TermsPage } from './terms';
+export { ContactPage } from './contact';
 
 // User pages
 export * from './user';
