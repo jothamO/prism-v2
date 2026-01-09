@@ -82,7 +82,7 @@ export function useAuth() {
         try {
             await authSignOut();
             setState({ user: null, loading: false, error: null });
-            navigate('/auth');
+            navigate('/login');
         } catch (err) {
             const message = err instanceof Error ? err.message : 'Sign out failed';
             setState(s => ({ ...s, loading: false, error: message }));

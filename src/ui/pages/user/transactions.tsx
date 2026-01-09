@@ -5,7 +5,7 @@
 
 import { useState, useMemo } from 'react';
 import { useTransactions, useCategorization } from '@/domains/transactions';
-import { TransactionCard, SearchInput, Select, Card, Button } from '@/ui/components';
+import { TransactionCard, SearchInput, Card, Button } from '@/ui/components';
 import { CATEGORIES } from '@/shared/constants';
 import type { Category } from '@/shared/types';
 
@@ -26,7 +26,7 @@ export function TransactionsPage() {
     // Category options
     const categoryOptions = useMemo(() => {
         const options: Array<{ value: string; label: string }> = [];
-        Object.entries(CATEGORIES).forEach(([group, cats]) => {
+        Object.entries(CATEGORIES).forEach(([, cats]) => {
             Object.entries(cats).forEach(([key, val]) => {
                 options.push({ value: key, label: val.label });
             });

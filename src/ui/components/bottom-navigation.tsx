@@ -14,8 +14,8 @@ interface NavItem {
 
 const navItems: NavItem[] = [
     { path: '/dashboard', label: 'Home', icon: '🏠' },
+    { path: '/transactions', label: 'Transactions', icon: '💳' },
     { path: '/tax', label: 'Tax', icon: '📊' },
-    { path: '/banking', label: 'Cards', icon: '💳' },
     { path: '/profile', label: 'Me', icon: '👤' },
 ];
 

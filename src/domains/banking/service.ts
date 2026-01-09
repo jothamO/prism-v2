@@ -131,7 +131,7 @@ export async function getConnectionStatus(connectionId: string): Promise<{
         .eq('bank_connection_id', connectionId);
 
     return {
-        status: connection?.status ?? 'inactive',
+        status: (connection?.status ?? 'inactive') as 'active' | 'inactive' | 'reauth_required',
         lastSync: connection?.last_sync_at ? new Date(connection.last_sync_at) : null,
         transactionCount: count ?? 0,
     };

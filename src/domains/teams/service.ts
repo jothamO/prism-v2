@@ -35,7 +35,7 @@ export async function createTeam(name: string, ownerId: string): Promise<Team> {
         id: data.id,
         name: data.name,
         ownerId: data.owner_id,
-        createdAt: new Date(data.created_at),
+        createdAt: new Date(data.created_at ?? new Date().toISOString()),
     };
 }
 
@@ -128,7 +128,7 @@ export async function inviteMember(
         userId: data.user_id ?? '',
         role: data.role as TeamRole,
         status: data.status as InviteStatus,
-        invitedBy: data.invited_by,
+        invitedBy: data.invited_by ?? '',
         joinedAt: data.joined_at ? new Date(data.joined_at) : null,
     };
 }

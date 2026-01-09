@@ -3,7 +3,7 @@
 // Tax overview with year selector and breakdowns
 // =====================================================
 
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTaxYear, useTaxCalculation } from '@/domains/tax';
 import { useTaxableTransactions } from '@/domains/transactions';
 import { Card, StatCard, Select } from '@/ui/components';
@@ -13,7 +13,7 @@ export function TaxDashboard() {
     const { selectedYear, setSelectedYear, availableYears, currentBands, isHistoricalMode } = useTaxYear();
 
     // Get taxable transactions for selected year
-    const { taxableIncome, deductibleExpenses, loading } = useTaxableTransactions(selectedYear);
+    const { taxableIncome, deductibleExpenses } = useTaxableTransactions(selectedYear);
 
     // Calculate tax
     const taxResult = useTaxCalculation(taxableIncome, selectedYear);

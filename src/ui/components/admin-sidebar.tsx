@@ -4,7 +4,7 @@
 // =====================================================
 
 import { useState, useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { cn } from '@/shared/utils';
 
 interface NavGroup {
@@ -46,7 +46,6 @@ const navGroups: NavGroup[] = [
 export function AdminSidebar() {
     const [collapsed, setCollapsed] = useState(false);
     const [openGroups, setOpenGroups] = useState<string[]>(navGroups.map(g => g.title));
-    const location = useLocation();
 
     // Persist sidebar state
     useEffect(() => {

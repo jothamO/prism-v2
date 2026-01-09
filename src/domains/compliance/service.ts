@@ -233,10 +233,9 @@ export async function getActiveRules(options?: {
 export async function upsertRule(rule: Partial<ComplianceRule> & { id?: string }) {
     const { data, error } = await supabase
         .from('compliance_rules')
-        .upsert({
+        .upsert([{
             ...rule,
-            updated_at: new Date().toISOString(),
-        })
+        }] as any)
         .select()
         .single();
 
