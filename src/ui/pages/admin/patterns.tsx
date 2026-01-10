@@ -30,6 +30,19 @@ export function AdminPatterns() {
 
     useEffect(() => {
         loadPatterns();
+
+        // Subscribe to realtime changes
+        const channel = supabase
+            .channel('admin-patterns')
+            .on('postgres_changes',
+                { event: '*', schema: 'public', table: 'transaction_patterns' },
+                () => loadPatterns()
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
     }, []);
 
     const loadPatterns = async () => {

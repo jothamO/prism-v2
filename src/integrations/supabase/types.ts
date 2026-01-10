@@ -1165,9 +1165,11 @@ export type Database = {
           email: string
           full_name: string | null
           id: string
+          migrated_from_v1: boolean | null
           onboarding_complete: boolean | null
           phone: string | null
           updated_at: string | null
+          v1_id: string | null
         }
         Insert: {
           auth_user_id?: string | null
@@ -1176,9 +1178,11 @@ export type Database = {
           email: string
           full_name?: string | null
           id?: string
+          migrated_from_v1?: boolean | null
           onboarding_complete?: boolean | null
           phone?: string | null
           updated_at?: string | null
+          v1_id?: string | null
         }
         Update: {
           auth_user_id?: string | null
@@ -1187,9 +1191,11 @@ export type Database = {
           email?: string
           full_name?: string | null
           id?: string
+          migrated_from_v1?: boolean | null
           onboarding_complete?: boolean | null
           phone?: string | null
           updated_at?: string | null
+          v1_id?: string | null
         }
         Relationships: []
       }
