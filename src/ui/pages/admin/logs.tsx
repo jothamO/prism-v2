@@ -19,6 +19,19 @@ export function AdminLogs() {
 
     useEffect(() => {
         loadLogs();
+
+        // Subscribe to realtime changes
+        const channel = supabase
+            .channel('admin-logs')
+            .on('postgres_changes',
+                { event: 'INSERT', schema: 'public', table: 'system_logs' },
+                () => loadLogs()
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
     }, [levelFilter, categoryFilter]);
 
     const loadLogs = async () => {

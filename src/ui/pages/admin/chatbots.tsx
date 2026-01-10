@@ -41,6 +41,28 @@ export function AdminChatbots() {
 
     useEffect(() => {
         loadStats();
+
+        // Subscribe to realtime changes for connection stats
+        const telegramChannel = supabase
+            .channel('admin-telegram')
+            .on('postgres_changes',
+                { event: '*', schema: 'public', table: 'telegram_connections' },
+                () => loadStats()
+            )
+            .subscribe();
+
+        const whatsappChannel = supabase
+            .channel('admin-whatsapp')
+            .on('postgres_changes',
+                { event: '*', schema: 'public', table: 'whatsapp_connections' },
+                () => loadStats()
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(telegramChannel);
+            supabase.removeChannel(whatsappChannel);
+        };
     }, []);
 
     const loadStats = async () => {

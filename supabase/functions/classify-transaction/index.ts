@@ -4,6 +4,7 @@
 // =====================================================
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { logInfo, logError, extractRequestMeta } from '../_shared/logger.ts';
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -16,8 +17,17 @@ serve(async (req) => {
         return new Response('ok', { headers: corsHeaders });
     }
 
+    const requestMeta = extractRequestMeta(req);
+
     try {
         const { description, amount, type } = await req.json();
+
+        await logInfo('classification', 'Transaction classification started', {
+            ...requestMeta,
+            description: description?.substring(0, 50),
+            amount,
+            type,
+        });
 
         // Build classification prompt
         const prompt = `Classify this Nigerian bank transaction:
@@ -62,7 +72,11 @@ Respond with JSON only: {"category": "...", "confidence": 0.0-1.0, "reasoning": 
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.error('Anthropic API error:', response.status, errorText);
+            await logError('classification', 'Anthropic API error', {
+                ...requestMeta,
+                status: response.status,
+                error: errorText,
+            });
             throw new Error(`API error: ${response.status}`);
         }
 
@@ -72,11 +86,21 @@ Respond with JSON only: {"category": "...", "confidence": 0.0-1.0, "reasoning": 
         // Parse response
         const classification = JSON.parse(content);
 
+        await logInfo('classification', 'Transaction classified successfully', {
+            ...requestMeta,
+            category: classification.category,
+            confidence: classification.confidence,
+        });
+
         return new Response(JSON.stringify(classification), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
     } catch (error) {
-        console.error('Classification error:', error);
+        await logError('classification', 'Classification failed', {
+            ...requestMeta,
+            error: error instanceof Error ? error.message : 'Unknown error',
+        });
+
         return new Response(
             JSON.stringify({
                 category: 'uncategorized',

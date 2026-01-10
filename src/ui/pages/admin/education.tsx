@@ -33,6 +33,19 @@ export function AdminEducation() {
 
     useEffect(() => {
         loadArticles();
+
+        // Subscribe to realtime changes
+        const channel = supabase
+            .channel('admin-education')
+            .on('postgres_changes',
+                { event: '*', schema: 'public', table: 'education_articles' },
+                () => loadArticles()
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
     }, []);
 
     const loadArticles = async () => {
