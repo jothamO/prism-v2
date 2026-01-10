@@ -5,10 +5,23 @@
 
 import { useState } from 'react';
 import { Card, Button, Input, Select } from '@/ui/components';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+
+interface MigrationStats {
+    users: { migrated: number; failed: number; skipped: number };
+    transactions: { migrated: number; failed: number; skipped: number };
+    connections: { telegram: number; whatsapp: number; bank: number };
+    duration_seconds: number;
+    errors: string[];
+}
 
 export function AdminSettings() {
     const [apiKeyVisible, setApiKeyVisible] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [migrating, setMigrating] = useState(false);
+    const [migrationResult, setMigrationResult] = useState<MigrationStats | null>(null);
+    const { toast } = useToast();
 
     const handleSave = async () => {
         setSaving(true);
@@ -114,9 +127,102 @@ export function AdminSettings() {
                 </div>
             </Card>
 
+            {/* Data Migration */}
+            <Card className="border-primary/20 border-2">
+                <h2 className="font-semibold text-primary mb-4">
+                    Data Migration
+                </h2>
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="font-medium text-gray-900 dark:text-white">Run V1 Migration</p>
+                            <p className="text-sm text-gray-500">Migrate users, transactions, and connections from V1</p>
+                        </div>
+                        <Button 
+                            variant="primary"
+                            loading={migrating}
+                            onClick={async () => {
+                                setMigrating(true);
+                                setMigrationResult(null);
+                                try {
+                                    const { data: { session } } = await supabase.auth.getSession();
+                                    if (!session) {
+                                        toast({ title: 'Error', description: 'Not authenticated', variant: 'destructive' });
+                                        return;
+                                    }
+                                    
+                                    const { data, error } = await supabase.functions.invoke('run-migration', {
+                                        headers: { Authorization: `Bearer ${session.access_token}` }
+                                    });
+                                    
+                                    if (error) throw error;
+                                    
+                                    if (data?.success) {
+                                        setMigrationResult(data.stats);
+                                        toast({ title: 'Migration Complete', description: `Migrated ${data.stats.users.migrated} users and ${data.stats.transactions.migrated} transactions` });
+                                    } else {
+                                        throw new Error(data?.error || 'Migration failed');
+                                    }
+                                } catch (error: any) {
+                                    toast({ title: 'Migration Failed', description: error.message, variant: 'destructive' });
+                                } finally {
+                                    setMigrating(false);
+                                }
+                            }}
+                        >
+                            {migrating ? 'Migrating...' : 'Run Migration'}
+                        </Button>
+                    </div>
+                    
+                    {migrationResult && (
+                        <div className="mt-4 p-4 bg-muted rounded-lg space-y-2">
+                            <h3 className="font-medium text-foreground">Migration Results</h3>
+                            <div className="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <p className="text-muted-foreground">Users</p>
+                                    <p className="text-foreground">
+                                        ✓ {migrationResult.users.migrated} migrated, 
+                                        ⏭ {migrationResult.users.skipped} skipped
+                                    </p>
+                                </div>
+                                <div>
+                                    <p className="text-muted-foreground">Transactions</p>
+                                    <p className="text-foreground">
+                                        ✓ {migrationResult.transactions.migrated} migrated, 
+                                        ⏭ {migrationResult.transactions.skipped} skipped
+                                    </p>
+                                </div>
+                                <div>
+                                    <p className="text-muted-foreground">Connections</p>
+                                    <p className="text-foreground">
+                                        📱 {migrationResult.connections.telegram} Telegram, 
+                                        💬 {migrationResult.connections.whatsapp} WhatsApp, 
+                                        🏦 {migrationResult.connections.bank} Bank
+                                    </p>
+                                </div>
+                                <div>
+                                    <p className="text-muted-foreground">Duration</p>
+                                    <p className="text-foreground">{migrationResult.duration_seconds.toFixed(1)}s</p>
+                                </div>
+                            </div>
+                            {migrationResult.errors.length > 0 && (
+                                <div className="mt-2 text-destructive text-sm">
+                                    <p className="font-medium">Errors:</p>
+                                    <ul className="list-disc list-inside">
+                                        {migrationResult.errors.slice(0, 5).map((err, i) => (
+                                            <li key={i}>{err}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+            </Card>
+
             {/* Danger Zone */}
-            <Card className="border-[hsl(346,96%,63%)]/20 border-2">
-                <h2 className="font-semibold text-[hsl(346,96%,63%)] mb-4">
+            <Card className="border-destructive/20 border-2">
+                <h2 className="font-semibold text-destructive mb-4">
                     Danger Zone
                 </h2>
                 <div className="space-y-4">
