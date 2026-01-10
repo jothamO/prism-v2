@@ -11,20 +11,22 @@ import { Button, Input, Card } from '@/ui/components';
 export function AdminLogin() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { signIn, loading, error, clearError } = useAuth();
+    const [submitting, setSubmitting] = useState(false);
+    const { signIn, error, clearError } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         clearError();
+        setSubmitting(true);
 
         try {
             await signIn(email, password);
-            // Check if user is admin after login
-            // The useAuth hook will update isAdmin
             navigate('/admin');
         } catch {
             // Error is handled by useAuth
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -68,7 +70,7 @@ export function AdminLogin() {
                             required
                         />
 
-                        <Button type="submit" fullWidth loading={loading}>
+                        <Button type="submit" fullWidth loading={submitting}>
                             Sign In to Admin
                         </Button>
                     </form>

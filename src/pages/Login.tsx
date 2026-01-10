@@ -11,7 +11,8 @@ import { Button, Input, Card } from '@/ui/components';
 export function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { signIn, loading, error, clearError } = useAuth();
+    const [submitting, setSubmitting] = useState(false);
+    const { signIn, error, clearError } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -20,12 +21,15 @@ export function Login() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         clearError();
+        setSubmitting(true);
 
         try {
             await signIn(email, password);
             navigate(from, { replace: true });
         } catch {
             // Error is handled by useAuth
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -71,7 +75,7 @@ export function Login() {
                         <Button
                             type="submit"
                             fullWidth
-                            loading={loading}
+                            loading={submitting}
                         >
                             Sign In
                         </Button>

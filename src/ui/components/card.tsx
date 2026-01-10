@@ -3,7 +3,7 @@
 // Cards for tax health, stats, and transactions
 // =====================================================
 
-import { type ReactNode, type HTMLAttributes } from 'react';
+import { forwardRef, type ReactNode, type HTMLAttributes } from 'react';
 import { cn } from '@/shared/utils';
 
 // Base Card
@@ -12,22 +12,27 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
     hover?: boolean;
 }
 
-export function Card({ className, children, hover, ...props }: CardProps) {
-    return (
-        <div
-            className={cn(
-                'rounded-2xl bg-white p-6',
-                'shadow-[0_4px_30px_rgba(54,41,183,0.07)]',
-                'dark:bg-[hsl(240,27%,20%)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.3)]',
-                hover && 'transition-transform hover:scale-[1.02] cursor-pointer',
-                className
-            )}
-            {...props}
-        >
-            {children}
-        </div>
-    );
-}
+export const Card = forwardRef<HTMLDivElement, CardProps>(
+    ({ className, children, hover, ...props }, ref) => {
+        return (
+            <div
+                ref={ref}
+                className={cn(
+                    'rounded-2xl bg-white p-6',
+                    'shadow-[0_4px_30px_rgba(54,41,183,0.07)]',
+                    'dark:bg-[hsl(240,27%,20%)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.3)]',
+                    hover && 'transition-transform hover:scale-[1.02] cursor-pointer',
+                    className
+                )}
+                {...props}
+            >
+                {children}
+            </div>
+        );
+    }
+);
+
+Card.displayName = 'Card';
 
 // Tax Health Card (Hero)
 interface TaxHealthCardProps {
