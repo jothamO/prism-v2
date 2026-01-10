@@ -75,7 +75,7 @@ async function migrateUsers() {
                 bvn: v1User.bvn,
                 business_name: v1User.business_name,
                 cac_number: v1User.cac_number,
-                onboarding_completed: v1User.onboarding_completed || false,
+                onboarding_complete: v1User.onboarding_completed || false,
                 onboarding_step: v1User.onboarding_step || 1,
                 kyc_level: v1User.kyc_level || 0,
                 verification_status: v1User.verification_status,
@@ -150,13 +150,14 @@ async function migrateTransactions() {
                 description: tx.description || tx.narration,
                 amount: tx.amount,
                 type: tx.type,
-                date: tx.date,
+                transaction_date: tx.date,
                 category: tx.category,
                 source: tx.source || 'migrated',
                 categorization_status: tx.categorization_status || 'pending',
                 metadata: tx.metadata,
                 created_at: tx.created_at,
                 migrated_from_v1: true,
+                v1_id: tx.id,
             }));
 
         if (v2Txns.length > 0) {
