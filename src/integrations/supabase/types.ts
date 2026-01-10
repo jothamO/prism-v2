@@ -26,6 +26,7 @@ export type Database = {
           currency: string | null
           id: string
           last_sync_at: string | null
+          migrated_from_v1: boolean | null
           mono_id: string
           status: string | null
           updated_at: string | null
@@ -42,6 +43,7 @@ export type Database = {
           currency?: string | null
           id?: string
           last_sync_at?: string | null
+          migrated_from_v1?: boolean | null
           mono_id: string
           status?: string | null
           updated_at?: string | null
@@ -58,6 +60,7 @@ export type Database = {
           currency?: string | null
           id?: string
           last_sync_at?: string | null
+          migrated_from_v1?: boolean | null
           mono_id?: string
           status?: string | null
           updated_at?: string | null
@@ -992,6 +995,7 @@ export type Database = {
           first_name: string | null
           id: string
           is_active: boolean | null
+          migrated_from_v1: boolean | null
           telegram_id: string
           updated_at: string | null
           user_id: string
@@ -1004,6 +1008,7 @@ export type Database = {
           first_name?: string | null
           id?: string
           is_active?: boolean | null
+          migrated_from_v1?: boolean | null
           telegram_id: string
           updated_at?: string | null
           user_id: string
@@ -1016,6 +1021,7 @@ export type Database = {
           first_name?: string | null
           id?: string
           is_active?: boolean | null
+          migrated_from_v1?: boolean | null
           telegram_id?: string
           updated_at?: string | null
           user_id?: string
@@ -1128,6 +1134,84 @@ export type Database = {
           },
         ]
       }
+      transactions: {
+        Row: {
+          amount: number
+          bank_connection_id: string | null
+          categorization_status: string | null
+          category: string | null
+          confidence: number | null
+          created_at: string | null
+          description: string
+          external_id: string | null
+          id: string
+          metadata: Json | null
+          migrated_from_v1: boolean | null
+          source: string | null
+          subcategory: string | null
+          transaction_date: string
+          type: string
+          updated_at: string | null
+          user_id: string
+          v1_id: string | null
+        }
+        Insert: {
+          amount: number
+          bank_connection_id?: string | null
+          categorization_status?: string | null
+          category?: string | null
+          confidence?: number | null
+          created_at?: string | null
+          description: string
+          external_id?: string | null
+          id?: string
+          metadata?: Json | null
+          migrated_from_v1?: boolean | null
+          source?: string | null
+          subcategory?: string | null
+          transaction_date: string
+          type: string
+          updated_at?: string | null
+          user_id: string
+          v1_id?: string | null
+        }
+        Update: {
+          amount?: number
+          bank_connection_id?: string | null
+          categorization_status?: string | null
+          category?: string | null
+          confidence?: number | null
+          created_at?: string | null
+          description?: string
+          external_id?: string | null
+          id?: string
+          metadata?: Json | null
+          migrated_from_v1?: boolean | null
+          source?: string | null
+          subcategory?: string | null
+          transaction_date?: string
+          type?: string
+          updated_at?: string | null
+          user_id?: string
+          v1_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_bank_connection_id_fkey"
+            columns: ["bank_connection_id"]
+            isOneToOne: false
+            referencedRelation: "bank_connections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -1159,43 +1243,73 @@ export type Database = {
       }
       users: {
         Row: {
+          account_type: string | null
           auth_user_id: string | null
           avatar_url: string | null
+          business_name: string | null
+          bvn: string | null
+          cac_number: string | null
           created_at: string | null
           email: string
           full_name: string | null
           id: string
+          kyc_level: number | null
           migrated_from_v1: boolean | null
+          nin: string | null
           onboarding_complete: boolean | null
+          onboarding_step: number | null
           phone: string | null
+          state: string | null
+          tin: string | null
           updated_at: string | null
           v1_id: string | null
+          verification_status: string | null
         }
         Insert: {
+          account_type?: string | null
           auth_user_id?: string | null
           avatar_url?: string | null
+          business_name?: string | null
+          bvn?: string | null
+          cac_number?: string | null
           created_at?: string | null
           email: string
           full_name?: string | null
           id?: string
+          kyc_level?: number | null
           migrated_from_v1?: boolean | null
+          nin?: string | null
           onboarding_complete?: boolean | null
+          onboarding_step?: number | null
           phone?: string | null
+          state?: string | null
+          tin?: string | null
           updated_at?: string | null
           v1_id?: string | null
+          verification_status?: string | null
         }
         Update: {
+          account_type?: string | null
           auth_user_id?: string | null
           avatar_url?: string | null
+          business_name?: string | null
+          bvn?: string | null
+          cac_number?: string | null
           created_at?: string | null
           email?: string
           full_name?: string | null
           id?: string
+          kyc_level?: number | null
           migrated_from_v1?: boolean | null
+          nin?: string | null
           onboarding_complete?: boolean | null
+          onboarding_step?: number | null
           phone?: string | null
+          state?: string | null
+          tin?: string | null
           updated_at?: string | null
           v1_id?: string | null
+          verification_status?: string | null
         }
         Relationships: []
       }
@@ -1205,6 +1319,7 @@ export type Database = {
           created_at: string | null
           id: string
           is_active: boolean | null
+          migrated_from_v1: boolean | null
           phone_number: string
           updated_at: string | null
           user_id: string
@@ -1216,6 +1331,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_active?: boolean | null
+          migrated_from_v1?: boolean | null
           phone_number: string
           updated_at?: string | null
           user_id: string
@@ -1227,6 +1343,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_active?: boolean | null
+          migrated_from_v1?: boolean | null
           phone_number?: string
           updated_at?: string | null
           user_id?: string
