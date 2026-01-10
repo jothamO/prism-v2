@@ -70,10 +70,10 @@ export function Dashboard() {
                 </h2>
                 <div className="grid grid-cols-4 gap-4">
                     {[
-                        { icon: '📸', label: 'Scan', path: '/scan' },
-                        { icon: '📋', label: 'File', path: '/file' },
-                        { icon: '➕', label: 'Add', path: '/add' },
-                        { icon: '⋯', label: 'More', path: '/more' },
+                        { icon: '📊', label: 'Reports', path: '/reports' },
+                        { icon: '📅', label: 'Calendar', path: '/tax-calendar' },
+                        { icon: '💳', label: 'Transactions', path: '/transactions' },
+                        { icon: '⚙️', label: 'Settings', path: '/settings' },
                     ].map((action) => (
                         <Link
                             key={action.label}

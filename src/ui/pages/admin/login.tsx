@@ -4,7 +4,7 @@
 // =====================================================
 
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/domains/auth';
 import { Button, Input, Card } from '@/ui/components';
 
@@ -74,12 +74,12 @@ export function AdminLogin() {
                     </form>
 
                     <div className="p-6 pt-0 text-center">
-                        <a
-                            href="/auth"
+                        <Link
+                            to="/login"
                             className="text-sm text-gray-400 hover:text-white"
                         >
                             ← Back to user login
-                        </a>
+                        </Link>
                     </div>
                 </Card>
             </div>
