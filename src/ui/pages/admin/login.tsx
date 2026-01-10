@@ -3,12 +3,12 @@
 // Admin-specific authentication
 // =====================================================
 
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/domains/auth';
 import { Button, Input, Card } from '@/ui/components';
 
-export function AdminLogin() {
+export const AdminLogin = forwardRef<HTMLDivElement, object>(function AdminLogin(_, ref) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [submitting, setSubmitting] = useState(false);
@@ -31,7 +31,7 @@ export function AdminLogin() {
     };
 
     return (
-        <div className="min-h-screen bg-[hsl(240,27%,13%)] flex items-center justify-center p-4">
+        <div ref={ref} className="min-h-screen bg-[hsl(240,27%,13%)] flex items-center justify-center p-4">
             <div className="w-full max-w-md">
                 <Card className="!p-0 overflow-hidden bg-[hsl(240,27%,20%)]">
                     {/* Header */}
@@ -87,4 +87,4 @@ export function AdminLogin() {
             </div>
         </div>
     );
-}
+});

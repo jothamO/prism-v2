@@ -3,7 +3,7 @@
 // Tracks extraction gaps for Claude Code integration
 // =====================================================
 
-import { supabase } from '@/domains/auth/service';
+import { supabase } from '@/integrations/supabase/client';
 import type { GapCategory, GapPriority, GapStatus } from '@/shared/types';
 
 interface ExtractionGap {

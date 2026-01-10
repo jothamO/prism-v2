@@ -3,12 +3,12 @@
 // Email/password authentication
 // =====================================================
 
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/domains/auth';
 import { Button, Input, Card } from '@/ui/components';
 
-export function Login() {
+export const Login = forwardRef<HTMLDivElement, object>(function Login(_, ref) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [submitting, setSubmitting] = useState(false);
@@ -34,7 +34,7 @@ export function Login() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[hsl(240,30%,16%)] px-4">
+        <div ref={ref} className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[hsl(240,30%,16%)] px-4">
             <div className="w-full max-w-md">
                 {/* Logo */}
                 <div className="text-center mb-8">
@@ -92,10 +92,10 @@ export function Login() {
                             </Link>
                         </p>
                     </div>
-                </Card>
+            </Card>
             </div>
         </div>
     );
-}
+});
 
 export default Login;
