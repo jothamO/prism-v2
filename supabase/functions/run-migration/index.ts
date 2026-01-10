@@ -30,9 +30,20 @@ serve(async (req) => {
     const V2_URL = Deno.env.get("SUPABASE_URL");
     const V2_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
+    // Validate V1 URL format
     if (!V1_URL || !V1_KEY) {
+      console.error("V1 credentials missing. V1_URL:", V1_URL ? "present" : "missing", "V1_KEY:", V1_KEY ? "present" : "missing");
       return new Response(
         JSON.stringify({ error: "V1 Supabase credentials not configured" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate URL format before creating client
+    if (!V1_URL.startsWith("https://") && !V1_URL.startsWith("http://")) {
+      console.error("V1_SUPABASE_URL is not a valid URL. Must start with https:// or http://");
+      return new Response(
+        JSON.stringify({ error: "V1 Supabase URL is invalid. Must be a valid HTTPS URL." }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
