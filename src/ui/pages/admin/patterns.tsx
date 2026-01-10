@@ -6,17 +6,11 @@
 import { useState, useEffect } from 'react';
 import { Card, Button, Input, SearchInput, Select } from '@/ui/components';
 import { CATEGORIES } from '@/shared/constants';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import type { Tables } from '@/integrations/supabase/types';
 
-interface TransactionPattern {
-    id: string;
-    pattern: string;
-    category: string;
-    merchant_type?: string;
-    confidence: number;
-    match_count: number;
-    is_active: boolean;
-    created_at: string;
-}
+type TransactionPattern = Tables<'transaction_patterns'>;
 
 export function AdminPatterns() {
     const [patterns, setPatterns] = useState<TransactionPattern[]>([]);
@@ -40,47 +34,86 @@ export function AdminPatterns() {
 
     const loadPatterns = async () => {
         setLoading(true);
-        // Table doesn't exist yet - using mock data
-        // TODO: Create transaction_patterns table
-        setPatterns([
-            { id: '1', pattern: 'UBER|BOLT|TAXIFY', category: 'transport', confidence: 0.95, match_count: 1250, is_active: true, created_at: new Date().toISOString() },
-            { id: '2', pattern: 'MTN|AIRTEL|GLO|9MOBILE', category: 'utilities', confidence: 0.92, match_count: 890, is_active: true, created_at: new Date().toISOString() },
-            { id: '3', pattern: 'NETFLIX|SPOTIFY|PRIME', category: 'entertainment', confidence: 0.98, match_count: 450, is_active: true, created_at: new Date().toISOString() },
-        ]);
-        setLoading(false);
+        try {
+            const { data, error } = await supabase
+                .from('transaction_patterns')
+                .select('*')
+                .order('match_count', { ascending: false });
+
+            if (error) throw error;
+            setPatterns(data || []);
+        } catch (error) {
+            console.error('Failed to load patterns:', error);
+            toast.error('Failed to load patterns');
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleAdd = async () => {
-        if (!newPattern.pattern || !newPattern.category) return;
+        if (!newPattern.pattern || !newPattern.category) {
+            toast.error('Pattern and category are required');
+            return;
+        }
+
         setSaving(true);
-        // TODO: Implement when transaction_patterns table exists
-        const newItem: TransactionPattern = {
-            id: `temp-${Date.now()}`,
-            pattern: newPattern.pattern,
-            category: newPattern.category,
-            merchant_type: newPattern.merchant_type || undefined,
-            confidence: 0.9,
-            match_count: 0,
-            is_active: true,
-            created_at: new Date().toISOString(),
-        };
-        setPatterns(prev => [...prev, newItem]);
-        setNewPattern({ pattern: '', category: '', merchant_type: '' });
-        setShowAdd(false);
-        setSaving(false);
+        try {
+            const { error } = await supabase
+                .from('transaction_patterns')
+                .insert({
+                    pattern: newPattern.pattern,
+                    category: newPattern.category,
+                    merchant_type: newPattern.merchant_type || null,
+                    confidence: 0.9,
+                    is_active: true,
+                    source: 'manual',
+                });
+
+            if (error) throw error;
+
+            toast.success('Pattern added');
+            await loadPatterns();
+            setNewPattern({ pattern: '', category: '', merchant_type: '' });
+            setShowAdd(false);
+        } catch (error) {
+            console.error('Failed to add pattern:', error);
+            toast.error('Failed to add pattern');
+        } finally {
+            setSaving(false);
+        }
     };
 
     const handleToggle = async (id: string, isActive: boolean) => {
-        // TODO: Implement when transaction_patterns table exists
-        setPatterns(prev => prev.map(p =>
-            p.id === id ? { ...p, is_active: isActive } : p
-        ));
+        try {
+            const { error } = await supabase
+                .from('transaction_patterns')
+                .update({ is_active: isActive, updated_at: new Date().toISOString() })
+                .eq('id', id);
+
+            if (error) throw error;
+            await loadPatterns();
+        } catch (error) {
+            console.error('Failed to toggle pattern:', error);
+            toast.error('Failed to update pattern');
+        }
     };
 
     const handleDelete = async (id: string) => {
         if (!confirm('Delete this pattern?')) return;
-        // TODO: Implement when transaction_patterns table exists
-        setPatterns(prev => prev.filter(p => p.id !== id));
+
+        try {
+            const { error } = await supabase
+                .from('transaction_patterns')
+                .delete()
+                .eq('id', id);
+
+            if (error) throw error;
+            toast.success('Pattern deleted');
+            await loadPatterns();
+        } catch (error) {
+            console.error('Failed to delete pattern:', error);
+            toast.error('Failed to delete pattern');
+        }
     };
 
     const filteredPatterns = patterns.filter(p =>
@@ -94,10 +127,10 @@ export function AdminPatterns() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    <h1 className="text-2xl font-bold text-foreground">
                         Transaction Patterns
                     </h1>
-                    <p className="text-gray-500 dark:text-gray-400">
+                    <p className="text-muted-foreground">
                         {patterns.length} patterns configured
                     </p>
                 </div>
@@ -109,7 +142,7 @@ export function AdminPatterns() {
             {/* Add Pattern Form */}
             {showAdd && (
                 <Card>
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
+                    <h3 className="font-semibold text-foreground mb-4">
                         New Pattern
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -148,69 +181,69 @@ export function AdminPatterns() {
             <Card className="!p-0 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full">
-                        <thead className="bg-gray-50 dark:bg-[hsl(240,24%,26%)]">
+                        <thead className="bg-muted">
                             <tr>
-                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase">
                                     Pattern
                                 </th>
-                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase">
                                     Category
                                 </th>
-                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase">
                                     Matches
                                 </th>
-                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase">
                                     Confidence
                                 </th>
-                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase">
                                     Status
                                 </th>
-                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">
+                                <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase">
                                     Actions
                                 </th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200 dark:divide-[hsl(240,24%,30%)]">
+                        <tbody className="divide-y divide-border">
                             {loading ? (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                                    <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
                                         Loading...
                                     </td>
                                 </tr>
                             ) : filteredPatterns.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                                    <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
                                         No patterns found
                                     </td>
                                 </tr>
                             ) : (
                                 filteredPatterns.map(pattern => (
-                                    <tr key={pattern.id} className="hover:bg-gray-50 dark:hover:bg-[hsl(240,24%,26%)]">
+                                    <tr key={pattern.id} className="hover:bg-muted/50">
                                         <td className="px-6 py-4">
-                                            <code className="text-sm bg-gray-100 dark:bg-[hsl(240,24%,26%)] px-2 py-1 rounded">
+                                            <code className="text-sm bg-muted px-2 py-1 rounded text-foreground">
                                                 {pattern.pattern}
                                             </code>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className="px-2 py-1 text-xs bg-[hsl(248,80%,36%)]/10 text-[hsl(248,80%,36%)] rounded-full">
+                                            <span className="px-2 py-1 text-xs bg-primary/10 text-primary rounded-full">
                                                 {pattern.category}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
-                                            {pattern.match_count.toLocaleString()}
+                                        <td className="px-6 py-4 text-sm text-muted-foreground">
+                                            {(pattern.match_count || 0).toLocaleString()}
                                         </td>
-                                        <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
-                                            {Math.round(pattern.confidence * 100)}%
+                                        <td className="px-6 py-4 text-sm text-muted-foreground">
+                                            {Math.round(Number(pattern.confidence || 0) * 100)}%
                                         </td>
                                         <td className="px-6 py-4">
                                             <label className="relative inline-flex items-center cursor-pointer">
                                                 <input
                                                     type="checkbox"
-                                                    checked={pattern.is_active}
+                                                    checked={pattern.is_active ?? true}
                                                     onChange={(e) => handleToggle(pattern.id, e.target.checked)}
                                                     className="sr-only peer"
                                                 />
-                                                <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[hsl(164,59%,58%)]" />
+                                                <div className="w-9 h-5 bg-muted peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-success" />
                                             </label>
                                         </td>
                                         <td className="px-6 py-4">

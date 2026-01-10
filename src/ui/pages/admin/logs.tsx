@@ -5,16 +5,10 @@
 
 import { useState, useEffect } from 'react';
 import { Card, Button, SearchInput, Select } from '@/ui/components';
+import { supabase } from '@/integrations/supabase/client';
+import type { Tables } from '@/integrations/supabase/types';
 
-interface LogEntry {
-    id: string;
-    level: 'info' | 'warn' | 'error';
-    category: string;
-    message: string;
-    metadata?: Record<string, unknown>;
-    user_id?: string;
-    created_at: string;
-}
+type LogEntry = Tables<'system_logs'>;
 
 export function AdminLogs() {
     const [logs, setLogs] = useState<LogEntry[]>([]);
@@ -29,33 +23,42 @@ export function AdminLogs() {
 
     const loadLogs = async () => {
         setLoading(true);
-        // Table doesn't exist yet - using mock data
-        // TODO: Create system_logs table
-        const mockLogs: LogEntry[] = [
-            { id: '1', level: 'info', category: 'auth', message: 'User logged in', created_at: new Date().toISOString() },
-            { id: '2', level: 'info', category: 'classification', message: 'Batch classification completed (50 transactions)', created_at: new Date().toISOString() },
-            { id: '3', level: 'warn', category: 'banking', message: 'Mono sync delayed - retrying', created_at: new Date(Date.now() - 60000).toISOString() },
-            { id: '4', level: 'error', category: 'ai', message: 'Claude API rate limit exceeded', metadata: { retryAfter: 60 }, created_at: new Date(Date.now() - 120000).toISOString() },
-            { id: '5', level: 'info', category: 'compliance', message: 'Document processed: Finance Act 2025', created_at: new Date(Date.now() - 180000).toISOString() },
-        ];
-        
-        let filtered = mockLogs;
-        if (levelFilter !== 'all') {
-            filtered = filtered.filter(l => l.level === levelFilter);
+        try {
+            let query = supabase
+                .from('system_logs')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(100);
+
+            if (levelFilter !== 'all') {
+                query = query.eq('level', levelFilter);
+            }
+            if (categoryFilter !== 'all') {
+                query = query.eq('category', categoryFilter);
+            }
+
+            const { data, error } = await query;
+
+            if (error) throw error;
+            setLogs(data || []);
+        } catch (error) {
+            console.error('Failed to load logs:', error);
+        } finally {
+            setLoading(false);
         }
-        if (categoryFilter !== 'all') {
-            filtered = filtered.filter(l => l.category === categoryFilter);
-        }
-        
-        setLogs(filtered);
-        setLoading(false);
     };
 
     const getLevelColor = (level: string) => {
         switch (level) {
-            case 'error': return 'bg-[hsl(346,96%,63%)]/10 text-[hsl(346,96%,63%)]';
-            case 'warn': return 'bg-[hsl(38,100%,58%)]/10 text-[hsl(38,100%,58%)]';
-            default: return 'bg-[hsl(164,59%,58%)]/10 text-[hsl(164,59%,58%)]';
+            case 'error':
+            case 'critical':
+                return 'bg-destructive/10 text-destructive';
+            case 'warn':
+                return 'bg-warning/10 text-warning';
+            case 'debug':
+                return 'bg-muted text-muted-foreground';
+            default:
+                return 'bg-success/10 text-success';
         }
     };
 
@@ -77,15 +80,21 @@ export function AdminLogs() {
         log.category.toLowerCase().includes(search.toLowerCase())
     );
 
+    const logCounts = {
+        info: logs.filter(l => l.level === 'info').length,
+        warn: logs.filter(l => l.level === 'warn').length,
+        error: logs.filter(l => l.level === 'error' || l.level === 'critical').length,
+    };
+
     return (
         <div className="p-6 space-y-6">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    <h1 className="text-2xl font-bold text-foreground">
                         System Logs
                     </h1>
-                    <p className="text-gray-500 dark:text-gray-400">
+                    <p className="text-muted-foreground">
                         Real-time activity and audit trail
                     </p>
                 </div>
@@ -104,9 +113,11 @@ export function AdminLogs() {
                     onChange={(e) => setLevelFilter(e.target.value)}
                     options={[
                         { value: 'all', label: 'All Levels' },
+                        { value: 'debug', label: 'Debug' },
                         { value: 'info', label: 'Info' },
                         { value: 'warn', label: 'Warning' },
                         { value: 'error', label: 'Error' },
+                        { value: 'critical', label: 'Critical' },
                     ]}
                     className="w-32"
                 />
@@ -129,35 +140,35 @@ export function AdminLogs() {
             {/* Stats */}
             <div className="grid grid-cols-3 gap-4">
                 <Card className="text-center !py-4">
-                    <p className="text-2xl font-bold text-[hsl(164,59%,58%)]">
-                        {logs.filter(l => l.level === 'info').length}
+                    <p className="text-2xl font-bold text-success">
+                        {logCounts.info}
                     </p>
-                    <p className="text-sm text-gray-500">Info</p>
+                    <p className="text-sm text-muted-foreground">Info</p>
                 </Card>
                 <Card className="text-center !py-4">
-                    <p className="text-2xl font-bold text-[hsl(38,100%,58%)]">
-                        {logs.filter(l => l.level === 'warn').length}
+                    <p className="text-2xl font-bold text-warning">
+                        {logCounts.warn}
                     </p>
-                    <p className="text-sm text-gray-500">Warnings</p>
+                    <p className="text-sm text-muted-foreground">Warnings</p>
                 </Card>
                 <Card className="text-center !py-4">
-                    <p className="text-2xl font-bold text-[hsl(346,96%,63%)]">
-                        {logs.filter(l => l.level === 'error').length}
+                    <p className="text-2xl font-bold text-destructive">
+                        {logCounts.error}
                     </p>
-                    <p className="text-sm text-gray-500">Errors</p>
+                    <p className="text-sm text-muted-foreground">Errors</p>
                 </Card>
             </div>
 
             {/* Logs List */}
             <Card className="!p-0 overflow-hidden">
                 {loading ? (
-                    <div className="p-8 text-center text-gray-500">Loading...</div>
+                    <div className="p-8 text-center text-muted-foreground">Loading...</div>
                 ) : filteredLogs.length === 0 ? (
-                    <div className="p-8 text-center text-gray-500">No logs found</div>
+                    <div className="p-8 text-center text-muted-foreground">No logs found</div>
                 ) : (
-                    <div className="divide-y divide-gray-200 dark:divide-[hsl(240,24%,30%)]">
+                    <div className="divide-y divide-border">
                         {filteredLogs.map(log => (
-                            <div key={log.id} className="p-4 hover:bg-gray-50 dark:hover:bg-[hsl(240,24%,26%)]">
+                            <div key={log.id} className="p-4 hover:bg-muted/50">
                                 <div className="flex items-start gap-3">
                                     <span className="text-xl">{getCategoryIcon(log.category)}</span>
                                     <div className="flex-1 min-w-0">
@@ -165,16 +176,21 @@ export function AdminLogs() {
                                             <span className={`px-2 py-0.5 text-xs rounded-full ${getLevelColor(log.level)}`}>
                                                 {log.level.toUpperCase()}
                                             </span>
-                                            <span className="text-xs text-gray-400">{log.category}</span>
-                                            <span className="text-xs text-gray-400">
-                                                {new Date(log.created_at).toLocaleTimeString()}
+                                            <span className="text-xs text-muted-foreground">{log.category}</span>
+                                            <span className="text-xs text-muted-foreground">
+                                                {log.created_at && new Date(log.created_at).toLocaleTimeString()}
                                             </span>
+                                            {log.ip_address && (
+                                                <span className="text-xs text-muted-foreground">
+                                                    IP: {log.ip_address}
+                                                </span>
+                                            )}
                                         </div>
-                                        <p className="text-sm text-gray-900 dark:text-white">
+                                        <p className="text-sm text-foreground">
                                             {log.message}
                                         </p>
-                                        {log.metadata && (
-                                            <pre className="mt-2 text-xs text-gray-500 bg-gray-50 dark:bg-[hsl(240,24%,26%)] p-2 rounded overflow-x-auto">
+                                        {log.metadata && Object.keys(log.metadata).length > 0 && (
+                                            <pre className="mt-2 text-xs text-muted-foreground bg-muted p-2 rounded overflow-x-auto">
                                                 {JSON.stringify(log.metadata, null, 2)}
                                             </pre>
                                         )}

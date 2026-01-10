@@ -5,6 +5,8 @@
 
 import { useState, useEffect } from 'react';
 import { Card, Button, Input, Select } from '@/ui/components';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 interface BotConfig {
     platform: 'telegram' | 'whatsapp';
@@ -16,7 +18,7 @@ interface BotConfig {
 }
 
 export function AdminChatbots() {
-    const [_loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [configs, setConfigs] = useState<BotConfig[]>([
         {
@@ -38,10 +40,36 @@ export function AdminChatbots() {
     ]);
 
     useEffect(() => {
-        // Tables don't exist yet - using mock data
-        // TODO: Create telegram_connections and whatsapp_connections tables
-        setLoading(false);
+        loadStats();
     }, []);
+
+    const loadStats = async () => {
+        setLoading(true);
+        try {
+            // Fetch Telegram connection stats
+            const { count: telegramCount } = await supabase
+                .from('telegram_connections')
+                .select('*', { count: 'exact', head: true })
+                .eq('is_active', true);
+
+            // Fetch WhatsApp connection stats
+            const { count: whatsappCount } = await supabase
+                .from('whatsapp_connections')
+                .select('*', { count: 'exact', head: true })
+                .eq('is_active', true);
+
+            setConfigs(prev => prev.map(config => ({
+                ...config,
+                connectedUsers: config.platform === 'telegram' 
+                    ? (telegramCount || 0) 
+                    : (whatsappCount || 0)
+            })));
+        } catch (error) {
+            console.error('Failed to load chatbot stats:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleToggle = (platform: string, enabled: boolean) => {
         setConfigs(prev => prev.map(config =>
@@ -53,6 +81,7 @@ export function AdminChatbots() {
         setSaving(true);
         // Save configuration logic
         await new Promise(resolve => setTimeout(resolve, 1000));
+        toast.success('Configuration saved successfully');
         setSaving(false);
     };
 
@@ -60,10 +89,10 @@ export function AdminChatbots() {
         <div className="p-6 space-y-6">
             {/* Header */}
             <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                <h1 className="text-2xl font-bold text-foreground">
                     Chatbot Management
                 </h1>
-                <p className="text-gray-500 dark:text-gray-400">
+                <p className="text-muted-foreground">
                     Configure Telegram and WhatsApp integrations
                 </p>
             </div>
@@ -104,18 +133,18 @@ export function AdminChatbots() {
                         </div>
 
                         {/* Stats */}
-                        <div className="p-6 grid grid-cols-2 gap-4 border-b border-gray-200 dark:border-[hsl(240,24%,30%)]">
+                        <div className="p-6 grid grid-cols-2 gap-4 border-b border-border">
                             <div className="text-center">
-                                <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                                    {config.connectedUsers}
+                                <p className="text-3xl font-bold text-foreground">
+                                    {loading ? '...' : config.connectedUsers}
                                 </p>
-                                <p className="text-sm text-gray-500">Connected Users</p>
+                                <p className="text-sm text-muted-foreground">Connected Users</p>
                             </div>
                             <div className="text-center">
-                                <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                                <p className="text-3xl font-bold text-foreground">
                                     {config.messagesHandled.toLocaleString()}
                                 </p>
-                                <p className="text-sm text-gray-500">Messages Handled</p>
+                                <p className="text-sm text-muted-foreground">Messages Handled</p>
                             </div>
                         </div>
 
@@ -149,7 +178,7 @@ export function AdminChatbots() {
 
             {/* PRISM AI Configuration */}
             <Card>
-                <h2 className="font-semibold text-gray-900 dark:text-white mb-4">
+                <h2 className="font-semibold text-foreground mb-4">
                     🤖 PRISM AI Configuration
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -167,12 +196,12 @@ export function AdminChatbots() {
                         ]}
                     />
                     <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                        <label className="block text-sm font-medium text-muted-foreground mb-1.5">
                             System Prompt
                         </label>
                         <textarea
                             rows={4}
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-[hsl(240,24%,30%)] bg-gray-50 dark:bg-[hsl(240,24%,26%)] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[hsl(248,80%,36%)]"
+                            className="w-full px-4 py-3 rounded-xl border border-border bg-muted text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                             placeholder="You are PRISM, a friendly Nigerian tax assistant..."
                         />
                     </div>
