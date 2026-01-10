@@ -49,10 +49,10 @@ export function LandingPage() {
                         PRISM
                     </Link>
                     <div className="flex items-center gap-4">
-                        <Link to="/auth" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                        <Link to="/login" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
                             Login
                         </Link>
-                        <Link to="/auth">
+                        <Link to="/signup">
                             <Button>Get Started</Button>
                         </Link>
                     </div>
@@ -71,11 +71,11 @@ export function LandingPage() {
                         and stay compliant with Nigerian tax regulations.
                     </p>
                     <div className="flex gap-4 justify-center">
-                        <Link to="/auth">
+                        <Link to="/signup">
                             <Button size="lg">Start Free Trial</Button>
                         </Link>
-                        <Link to="/auth">
-                            <Button variant="outline" size="lg">Watch Demo</Button>
+                        <Link to="/login">
+                            <Button variant="outline" size="lg">Sign In</Button>
                         </Link>
                     </div>
                 </div>
@@ -115,7 +115,7 @@ export function LandingPage() {
                     <p className="text-xl text-gray-600 dark:text-gray-400 mb-8">
                         Join thousands of Nigerian businesses using PRISM
                     </p>
-                    <Link to="/auth">
+                    <Link to="/signup">
                         <Button size="lg">Get Started Free</Button>
                     </Link>
                 </div>

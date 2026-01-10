@@ -3,6 +3,7 @@
 // User profile with settings and logout
 // =====================================================
 
+import { Link } from 'react-router-dom';
 import { useAuth } from '@/domains/auth';
 import { useCurrentUserProfile } from '@/domains/users';
 import { useTheme } from '@/ui/providers/theme-provider';
@@ -98,13 +99,13 @@ export function ProfilePage() {
             {/* Admin Link */}
             {isAdmin && (
                 <Card>
-                    <a
-                        href="/admin"
+                    <Link
+                        to="/admin"
                         className="flex items-center justify-between py-2 text-[hsl(248,80%,36%)] dark:text-[hsl(248,36%,53%)] font-medium"
                     >
                         <span>Go to Admin Dashboard</span>
                         <span>→</span>
-                    </a>
+                    </Link>
                 </Card>
             )}
 

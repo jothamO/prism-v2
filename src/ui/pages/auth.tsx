@@ -26,7 +26,7 @@ export function AuthPage() {
                 navigate('/dashboard');
             } else {
                 await signUp(email, password);
-                navigate('/register');
+                navigate('/login');
             }
         } catch {
             // Error is handled by useAuth

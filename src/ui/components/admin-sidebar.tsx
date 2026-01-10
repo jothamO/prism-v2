@@ -28,10 +28,7 @@ const navGroups: NavGroup[] = [
     {
         title: 'Compliance',
         items: [
-            { path: '/admin/compliance', label: 'Knowledge Base', icon: '⚖️' },
-            { path: '/admin/compliance/documents', label: 'Documents', icon: '📄' },
-            { path: '/admin/compliance/rules', label: 'Rules', icon: '📜' },
-            { path: '/admin/compliance/gaps', label: 'Gap Tracking', icon: '🔍' },
+            { path: '/admin/compliance', label: 'Compliance', icon: '⚖️' },
         ],
     },
     {
