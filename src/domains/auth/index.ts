@@ -4,3 +4,4 @@
 
 export * from './service';
 export * from './hooks';
+export { AuthProvider } from './context';
