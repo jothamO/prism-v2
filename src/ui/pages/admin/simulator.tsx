@@ -52,7 +52,7 @@ export function AdminSimulator() {
     const [userId, setUserId] = useState('');
     const [simulating, setSimulating] = useState(false);
     const [results, setResults] = useState<{ success: number; failed: number } | null>(null);
-    const [_customTransactions, setCustomTransactions] = useState<SimulatedTransaction[]>([]);
+    const [_customTransactions, _setCustomTransactions] = useState<SimulatedTransaction[]>([]);
 
     const runSimulation = async () => {
         if (!userId) {
